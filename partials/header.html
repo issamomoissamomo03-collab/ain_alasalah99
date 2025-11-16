@@ -1,0 +1,76 @@
+<header class="fixed top-0 inset-x-0 z-50 bg-white/80 backdrop-blur border-b border-slate-200/80">
+  <div class="max-w-7xl mx-auto">
+    <div class="flex items-center justify-between h-16 px-3 md:px-0">
+      <!-- Right: Brand -->
+      <div class="flex items-center justify-end">
+        <a href="/index.html#home" class="text-teal-800 font-extrabold text-xl">منصة عين الأصالة</a>
+      </div>
+
+      <!-- Center: Main navigation (hidden on mobile) -->
+      <nav class="hidden md:flex items-center justify-center gap-6">
+        <a href="/index.html#home" class="text-slate-700 hover:text-teal-700">الرئيسية</a>
+        <a href="/courses.html" class="text-slate-700 hover:text-teal-700">الدورات</a>
+        <a href="/articles.html" class="text-slate-700 hover:text-teal-700">المقالات</a>
+        <a href="/books.html" class="text-slate-700 hover:text-teal-700">متجر الكتب</a>
+        <!-- Orders dropdown (hover) -->
+        <div class="relative group">
+          <button class="inline-flex items-center gap-1 text-slate-700 hover:text-teal-700">
+            الطلبات
+            <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.939l3.71-3.71a.75.75 0 011.06 1.061l-4.24 4.24a.75.75 0 01-1.06 0L5.25 8.291a.75.75 0 01-.02-1.06z" clip-rule="evenodd"/></svg>
+          </button>
+          <div class="menu absolute right-0 mt-2 w-44 bg-white border border-slate-200 rounded-lg shadow-lg py-2 hidden group-hover:block group-focus-within:block">
+            <a href="/orders.html" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">كل الطلبات</a>
+            <a href="/cart.html" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">السلة</a>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Left: User actions + Mobile toggle -->
+      <div class="flex items-center gap-3">
+        <!-- Profile shortcut (desktop, only when logged in) -->
+        <a href="/profile.html" class="hidden md:inline-flex text-sm font-semibold text-slate-700 hover:text-teal-700 hide-on-logged-out">حسابي</a>
+
+        <!-- Logged-out: Login button -->
+        <a id="loginBtn" href="/login.html" class="inline-flex bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold rounded-full px-4 py-2 hide-on-logged-in">تسجيل الدخول</a>
+
+        <!-- Logged-in: User menu dropdown -->
+        <div class="relative hidden hide-on-logged-out" id="userMenu">
+          <button id="userMenuBtn" class="inline-flex items-center gap-1 rounded-full border px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">
+            حسابي
+            <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.939l3.71-3.71a.75.75 0 011.06 1.061l-4.24 4.24a.75.75 0 01-1.06 0L5.25 8.291a.75.75 0 01-.02-1.06z" clip-rule="evenodd"/></svg>
+          </button>
+          <div id="userDropdown" class="absolute left-0 mt-2 w-48 origin-top-left bg-white border border-slate-200 rounded-lg shadow-lg py-2 hidden">
+            <a href="/profile.html" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">الملف الشخصي</a>
+            <a href="/orders.html" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">طلباتي</a>
+            <a href="/cart.html" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+              السلة
+              <span id="cartCount" class="ml-2 inline-flex items-center justify-center min-w-[1.25rem] h-5 rounded-full bg-amber-500 text-white text-xs px-1">0</span>
+            </a>
+            <button id="logoutBtn" class="w-full text-start px-4 py-2 text-sm text-rose-700 hover:bg-rose-50">تسجيل الخروج</button>
+          </div>
+        </div>
+
+        <!-- Mobile: Hamburger -->
+        <button id="menuToggle" class="md:hidden inline-flex items-center justify-center w-10 h-10 rounded-md border text-slate-700" aria-label="فتح القائمة">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile menu -->
+    <nav id="mobileMenu" class="md:hidden hidden border-b shadow-sm bg-white">
+      <div class="flex flex-col divide-y">
+        <a href="/index.html#home" class="px-5 py-3 hover:bg-slate-50">الرئيسية</a>
+        <a href="/courses.html" class="px-5 py-3 hover:bg-slate-50">الدورات</a>
+        <a href="/articles.html" class="px-5 py-3 hover:bg-slate-50">المقالات</a>
+        <a href="/books.html" class="px-5 py-3 hover:bg-slate-50">متجر الكتب</a>
+        <a href="/orders.html" class="px-5 py-3 hover:bg-slate-50">كل الطلبات</a>
+        <a href="/cart.html" class="px-5 py-3 hover:bg-slate-50">السلة</a>
+        <a id="mobileProfile" href="/profile.html" class="hidden px-5 py-3 hover:bg-slate-50">حسابي</a>
+        <a id="mobileLogin" href="/login.html" class="px-5 py-3 hover:bg-slate-50 hide-on-logged-in">تسجيل الدخول</a>
+        <button id="mobileLogout" class="hidden text-right px-5 py-3 hover:bg-rose-50 text-rose-700 hide-on-logged-out">تسجيل الخروج</button>
+      </div>
+    </nav>
+  </div>
+</header>
+

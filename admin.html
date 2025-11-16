@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>لوحة الإدارة | منصة عين الأصالة</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    /* Chat styles for admin */
+.admin-chat-bubble-user { background-color: #f1f5f9; align-self: flex-start; }
+.admin-chat-bubble-admin { background-color: #cceae7; align-self: flex-end; }
+    body{font-family:"Cairo",system-ui,Segoe UI,Roboto,Arial}
+    .navbtn{display:block;padding:.6rem 1rem;border-radius:.75rem}
+    .navbtn.active{background:#0f766e;color:#fff}
+    .section{display:none}
+    .section.active{display:block}
+    .hint{font-size:.75rem;color:#64748b}
+    .tbl th,.tbl td{border-bottom:1px solid #e2e8f0;padding:.5rem .6rem;vertical-align:top}
+  </style>
+</head>
+<body class="bg-slate-50">
+  <div id="adminApp" class="min-h-screen grid md:grid-cols-[220px_1fr]" style="display:none">
+    <!-- Sidebar -->
+    <aside class="bg-white border-slate-200 border-e p-4 space-y-2">
+      <div class="font-extrabold text-teal-800 text-xl mb-2">لوحة الإدارة</div>
+      <a href="#" data-target="sec-courses" class="navbtn active">الكورسات</a>
+      <a href="#" data-target="sec-orders" class="navbtn">الطلبات</a>
+      <a href="#" data-target="sec-lessons" class="navbtn">الدروس</a>
+      <a href="#" data-target="sec-books" class="navbtn">الكتب</a>
+      <a href="#" data-target="sec-articles" class="navbtn">المقالات</a>
+      <a href="#" data-target="sec-article-comments" class="navbtn">تعليقات المقالات</a>
+      <a href="#" data-target="sec-consults" class="navbtn">الرسائل</a>
+      <a href="#" data-target="sec-enrollments" class="navbtn">طلبات التسجيل</a>
+      <a href="#" data-target="sec-live" class="navbtn">الإعلان المباشر</a>
+      <a href="#" data-target="sec-users" class="navbtn">المستخدمون</a>
+
+      <div class="mt-6 border-t pt-3">
+        <div id="adminUser" class="text-sm text-slate-600">—</div>
+        <div class="flex gap-2 mt-2">
+          <button id="loginGoogle" class="px-3 py-1.5 bg-teal-600 text-white rounded-lg text-sm">تسجيل الدخول</button>
+          <button id="logout" class="px-3 py-1.5 bg-rose-600 text-white rounded-lg text-sm">خروج</button>
+        </div>
+        <div class="hint mt-2">هذه الصفحة مخصّصة لحسابات الأدمن المصرّح بها فقط.</div>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="p-5 md:p-8">
+      <!-- Gate -->
+      <div id="gate" class="bg-amber-50 border border-amber-200 text-amber-900 rounded-xl p-4 hidden">
+        هذه الصفحة مخصّصة للمشرفين فقط. سجّل الدخول بحسابك المصرّح أو اطلب صلاحية أدمن.
+      </div>
+
+      <!-- COURSES -->
+      <section id="sec-courses" class="section space-y-4">
+        <h2 class="text-xl font-extrabold text-teal-800">إدارة الكورسات</h2>
+
+        <div class="bg-white rounded-xl ring-1 ring-slate-200 p-4 space-y-3">
+          <h3 class="font-bold">إضافة/تعديل كورس</h3>
+          <div class="grid md:grid-cols-2 gap-3 items-start">
+            <input id="c_id" class="border rounded p-2" placeholder="(اختياري) _id للتعديل">
+            <input id="c_title" class="border rounded p-2" placeholder="عنوان الكورس *">
+            <input id="c_teacher" class="border rounded p-2" placeholder="المدرّس">
+            <input id="c_price" type="number" class="border rounded p-2" placeholder="السعر (د.أ)">
+            <input id="c_desc" class="border rounded p-2 md:col-span-2" placeholder="وصف مختصر">
+            <div>
+              <label class="block text-sm mb-1">صورة الكورس (رفع ملف)</label>
+              <input id="c_cover_file" type="file" accept="image/*">
+            </div>
+            <div>
+              <label class="block text-sm mb-1">أو رابط صورة</label>
+              <input id="c_cover_url" class="border rounded p-2 w-full" placeholder="https://...">
+            </div>
+            <div class="md:col-span-2">
+              <label class="block text-sm mb-1">الكتاب الهدية (اختياري)</label>
+              <select id="c_giftBook" class="border rounded p-2 w-full">
+                  <option value="">-- لا يوجد كتاب هدية --</option>
+              </select>
+          </div>
+          <div class="flex gap-2">
+            <button id="createCourse" class="px-4 py-2 bg-amber-500 text-white rounded-lg">حفظ جديد</button>
+            <button id="updateCourse" class="px-4 py-2 bg-slate-700 text-white rounded-lg">تحديث موجود</button>
+          </div>
+          <div id="createCourseMsg" class="text-sm text-slate-600"></div>
+        </div>
+
+        <div class="bg-white rounded-xl ring-1 ring-slate-200 p-4">
+          <h3 class="font-bold mb-3">القائمة</h3>
+          <table class="tbl w-full text-sm" id="tblCourses">
+            <thead><tr><th>الصورة</th><th>العنوان</th><th>المدرّس</th><th>السعر</th><th>إجراءات</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+<!-- ORDERS -->
+<section id="sec-orders" class="section space-y-4">
+    <h2 class="text-xl font-extrabold text-teal-800">إدارة الطلبات</h2>
+    <div id="adminOrdersWrap" class="space-y-6">
+        <div class="text-center text-slate-500">جاري تحميل الطلبات...</div>
+    </div>
+  </section>
+      <!-- LESSONS -->
+      <section id="sec-lessons" class="section space-y-4">
+        <h2 class="text-xl font-extrabold text-teal-800">إدارة الدروس</h2>
+
+        <div class="bg-white rounded-xl ring-1 ring-slate-200 p-4 space-y-3">
+          <h3 class="font-bold">إضافة درس لكورس</h3>
+          <div class="grid md:grid-cols-2 gap-3 items-start">
+            <input id="l_courseId" class="border rounded p-2" placeholder="Course _id *">
+            <input id="l_title" class="border rounded p-2" placeholder="عنوان الدرس *">
+            <div>
+              <label class="block text-sm mb-1">فيديو (رفع ملف)</label>
+              <input id="l_video_file" type="file" accept="video/*">
+            </div>
+            <div>
+              <label class="block text-sm mb-1">أو رابط فيديو</label>
+              <input id="l_video_url" class="border rounded p-2 w-full" placeholder="https://...">
+            </div>
+            <label class="inline-flex items-center gap-2"><input id="l_isPreview" type="checkbox" class="w-5 h-5"> درس معاينة؟</label>
+            <input id="l_order" type="number" class="border rounded p-2" placeholder="الترتيب">
+          </div>
+          <button id="createLesson" class="px-4 py-2 bg-amber-500 text-white rounded-lg">حفظ الدرس</button>
+          <div id="createLessonMsg" class="text-sm text-slate-600"></div>
+        </div>
+
+        <div class="bg-white rounded-xl ring-1 ring-slate-200 p-4 space-y-3">
+          <h3 class="font-bold">عرض دروس كورس</h3>
+          <div class="flex gap-2 items-center">
+            <input id="lq_courseId" class="border rounded p-2" placeholder="Course _id">
+            <button id="loadLessons" class="px-3 py-2 bg-slate-700 text-white rounded-lg">تحميل</button>
+          </div>
+          <table class="tbl w-full text-sm" id="tblLessons">
+            <thead><tr><th>العنوان</th><th>معاينة</th><th>ترتيب</th><th>رابط</th><th>حذف</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- BOOKS -->
+      <section id="sec-books" class="section space-y-4">
+        <h2 class="text-xl font-extrabold text-teal-800">إدارة الكتب</h2>
+
+        <div class="bg-white rounded-xl ring-1 ring-slate-200 p-4 space-y-3">
+          <h3 class="font-bold">إضافة/تعديل كتاب</h3>
+          <div class="grid md:grid-cols-2 gap-3 items-start">
+            <input id="b_id" class="border rounded p-2" placeholder="(اختياري) _id للتعديل">
+            <input id="b_title" class="border rounded p-2" placeholder="عنوان الكتاب *">
+            <input id="b_author" class="border rounded p-2" placeholder="المؤلف">
+            <input id="b_price" type="number" class="border rounded p-2" placeholder="السعر (د.أ)">
+            <input id="b_desc" class="border rounded p-2 md:col-span-2" placeholder="وصف مختصر">
+            <div>
+              <label class="block text-sm mb-1">صورة الغلاف (رفع)</label>
+              <input id="b_cover_file" type="file" accept="image/*">
+            </div>
+            <div>
+              <label class="block text-sm mb-1">أو رابط صورة</label>
+              <input id="b_cover_url" class="border rounded p-2 w-full" placeholder="https://...">
+            </div>
+            <div>
+              <label class="block text-sm mb-1">ملف الكتاب (PDF رفع)</label>
+              <input id="b_file_file" type="file" accept="application/pdf">
+            </div>
+            <div>
+              <label class="block text-sm mb-1">أو رابط ملف</label>
+              <input id="b_file_url" class="border rounded p-2 w-full" placeholder="https://...">
+            </div>
+          </div>
+          <div class="flex gap-2">
+            <button id="createBook" class="px-4 py-2 bg-amber-500 text-white rounded-lg">حفظ جديد</button>
+            <button id="updateBook" class="px-4 py-2 bg-slate-700 text-white rounded-lg">تحديث موجود</button>
+          </div>
+          <div id="createBookMsg" class="text-sm text-slate-600"></div>
+        </div>
+
+        <div class="bg-white rounded-xl ring-1 ring-slate-200 p-4">
+          <h3 class="font-bold mb-3">القائمة</h3>
+          <table class="tbl w-full text-sm" id="tblBooks">
+            <thead><tr><th>الغلاف</th><th>العنوان</th><th>السعر</th><th>ملف</th><th>إجراءات</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ARTICLES -->
+      <section id="sec-articles" class="section space-y-4">
+        <h2 class="text-xl font-extrabold text-teal-800">إدارة المقالات</h2>
+
+        <div class="bg-white rounded-xl ring-1 ring-slate-200 p-4 space-y-3">
+          <h3 class="font-bold">إضافة/تعديل مقال</h3>
+          <input id="a_id" class="border rounded p-2" placeholder="(اختياري) _id للتعديل">
+          <input id="a_title" class="border rounded p-2 w-full" placeholder="العنوان *">
+          <textarea id="a_body" class="border rounded p-2 w-full min-h-[160px]" placeholder="نص المقال *"></textarea>
+          <div class="grid md:grid-cols-2 gap-3 items-start">
+    <div>
+        <label class="block text-sm mb-1">صورة المقال (رفع ملف)</label>
+        <input id="a_cover_file" type="file" accept="image/*">
+    </div>
+    <div>
+        <label class="block text-sm mb-1">أو رابط صورة</label>
+        <input id="a_cover_url" class="border rounded p-2 w-full" placeholder="https://...">
+    </div>
+</div>
+
+          <div class="flex gap-2">
+            <button id="createArticle" class="px-4 py-2 bg-amber-500 text-white rounded-lg">حفظ جديد</button>
+            <button id="updateArticle" class="px-4 py-2 bg-slate-700 text-white rounded-lg">تحديث موجود</button>
+          </div>
+          <div id="createArticleMsg" class="text-sm text-slate-600"></div>
+        </div>
+
+        <div class="bg-white rounded-xl ring-1 ring-slate-200 p-4">
+          <h3 class="font-bold mb-3">القائمة</h3>
+          <table class="tbl w-full text-sm" id="tblArticles">
+            <thead><tr><th>العنوان</th><th>منشور؟</th><th>نُشر في</th><th>إجراءات</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+<!-- ARTICLE COMMENTS -->
+<section id="sec-article-comments" class="section space-y-4">
+    <h2 class="text-xl font-extrabold text-teal-800">إدارة تعليقات المقالات</h2>
+     <div class="bg-white rounded-xl ring-1 ring-slate-200 p-4 space-y-3">
+      <h3 class="font-bold">عرض تعليقات مقال</h3>
+      <div class="flex gap-2 items-center">
+        <input id="ac_articleId" class="border rounded p-2" placeholder="Article _id">
+        <button id="loadComments" class="px-3 py-2 bg-slate-700 text-white rounded-lg">تحميل التعليقات</button>
+      </div>
+      <table class="tbl w-full text-sm" id="tblComments">
+        <thead><tr><th>المستخدم</th><th>التعليق</th><th>التاريخ</th><th>حذف</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+      <!-- CONSULTATIONS -->
+      <section id="sec-consults" class="section space-y-4">
+        <h2 class="text-xl font-extrabold text-teal-800">الرسائل/الاستشارات</h2>
+        <div class="grid lg:grid-cols-3 gap-6 items-start">
+          <div class="lg:col-span-1 bg-white rounded-xl ring-1 ring-slate-200 p-4">
+            <h3 class="font-bold mb-3">قائمة المحادثات</h3>
+            <div id="consultsList" class="space-y-2">
+              </div>
+          </div>
+          <div class="lg:col-span-2 bg-white rounded-xl ring-1 ring-slate-200">
+              <div id="chatView" class="flex flex-col h-[75vh]">
+                <div class="p-4 text-center text-slate-500">
+                    الرجاء اختيار محادثة من القائمة لعرضها.
+                </div>
+              </div>
+          </div>
+        </div>
+      </section>
+      <section id="sec-enrollments" class="section space-y-4">
+        <h2 class="text-xl font-extrabold text-teal-800">طلبات التسجيل بالدورات</h2>
+        <div class="bg-white rounded-xl ring-1 ring-slate-200 p-4">
+          <h3 class="font-bold mb-3">كل الطلبات</h3>
+          <table class="tbl w-full text-sm" id="tblEnrollments">
+            <thead>
+              <tr>
+                <th>المستخدم</th>
+                <th>الدورة</th>
+                <th>السعر</th>
+                <th>تاريخ الطلب</th>
+                <th>الحالة</th>
+                <th>إجراءات</th>
+              </tr>
+            </thead>
+            <tbody>
+              </tbody>
+          </table>
+        </div>
+      </section>
+      <section id="sec-live" class="section space-y-4">
+        <h2 class="text-xl font-extrabold text-teal-800">إدارة الإعلانات</h2>
+        <div class="bg-white rounded-xl ring-1 ring-slate-200 p-4 space-y-3">
+          <h3 class="font-bold">إضافة / تعديل إعلان</h3>
+          <input id="ann_id" type="hidden"> <input id="ann_text" class="border rounded p-2 w-full" placeholder="نص الإعلان الإجباري...">
+          <input id="ann_link" class="border rounded p-2 w-full" placeholder="الرابط (اختياري)">
+          <input id="ann_duration" type="number" min="1" class="border rounded p-2 w-48" placeholder="مدة الظهور بالساعات (اختياري)">
+          <div class="flex items-center gap-3">
+            <button id="saveAnnouncement" class="px-5 py-2 bg-amber-500 text-white rounded-lg font-semibold">حفظ الإعلان</button>
+            <button id="clearAnnForm" type="button" class="px-4 py-2 bg-slate-600 text-white rounded-lg">مسح النموذج</button>
+          </div>
+          <div id="announcementMsg" class="text-sm pt-2"></div>
+        </div>
+        <div class="bg-white rounded-xl ring-1 ring-slate-200 p-4">
+          <h3 class="font-bold mb-3">قائمة الإعلانات النشطة</h3>
+          <table class="tbl w-full text-sm" id="tblAnnouncements">
+            <thead><tr><th>النص</th><th>الحالة</th><th>ينتهي في</th><th>إجراءات</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+      <section id="sec-users" class="section space-y-4">
+        <h2 class="text-xl font-extrabold text-teal-800">المستخدمون</h2>
+        <div class="bg-white rounded-xl ring-1 ring-slate-200 p-4">
+          <div class="mb-3 text-sm text-slate-600">يعرض كل الحسابات المسجّلة وأدوارها. يمكنك ترقية/إرجاع الصلاحية.</div>
+          <table class="tbl w-full text-sm" id="tblUsers">
+            <thead><tr><th>الاسم</th><th>البريد</th><th>الدور</th><th>إجراءات</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
+
+  <script src="assets/js/firebase-config.js"></script>
+
+  <script src="assets/js/auth-fetch.js"></script>
+  <script src="assets/js/admin.js" defer></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+</body>
+</html>

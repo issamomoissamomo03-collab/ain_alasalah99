@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>بياناتي | منصة عين الأصالة</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="assets/js/tailwind-config.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/heroicons/2.1.3/24/solid/css/heroicons.min.css" />
+  <style>
+    /* Style for the dropdown */
+    #userDropdown {
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+  </style>
+</head>
+<body class="font-sans bg-slate-100 text-slate-800 antialiased pt-20">
+
+  <header class="fixed top-0 inset-x-0 z-50 bg-white/90 backdrop-blur border-b border-slate-200/80">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="relative flex items-center justify-between h-16">
+        <div class="flex-shrink-0">
+          <a href="index.html" class="text-teal-800 font-extrabold text-2xl hover:text-teal-700 transition">عين الأصالة</a>
+        </div>
+
+        <nav class="hidden md:flex flex-grow items-center justify-center gap-x-6">
+          <a href="index.html" class="text-slate-700 hover:text-teal-700 transition-colors">الرئيسية</a>
+          <a href="books.html" class="text-slate-700 hover:text-teal-700 transition-colors">متجر الكتب</a>
+          <a href="articles.html" class="text-slate-700 hover:text-teal-700 transition-colors">المقالات</a>
+        </nav>
+
+        <div class="relative">
+          <button id="userMenuBtn" type="button" class="flex items-center gap-2 text-sm font-medium text-slate-800 hover:text-teal-700 focus:outline-none">
+            حسابي
+            <i class="hi-solid hi-chevron-down w-4 h-4 text-slate-500"></i>
+          </button>
+          
+          <div id="userDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 origin-top-right transform opacity-0 scale-95">
+            <div class="py-1">
+              <a href="profile.html" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100">بياناتي</a>
+              <a href="orders.html" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100">طلباتي</a>
+              <button id="logoutBtn" class="w-full text-right block px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                تسجيل الخروج
+              </button>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-2xl mx-auto py-10 px-4">
+    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+      <div class="p-6 md:p-8">
+        <div class="flex items-center space-x-4 rtl:space-x-reverse mb-6">
+          <div class="flex-shrink-0">
+            <span class="inline-flex items-center justify-center h-16 w-16 rounded-full bg-teal-100">
+              <i class="hi-solid hi-user text-3xl text-teal-700"></i>
+            </span>
+          </div>
+          <div>
+            <h1 class="text-2xl font-bold text-teal-800">بيانات التواصل والشحن</h1>
+            <p class="text-sm text-slate-500 mt-1">تُستخدم هذه البيانات لإتمام عمليات الشراء وتوصيل الطلبات.</p>
+          </div>
+        </div>
+
+        <div class="border-t border-slate-200 pt-6 space-y-5">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div>
+              <label for="name" class="block text-sm font-medium text-slate-700 mb-1">الاسم الكامل</label>
+              <input type="text" id="name" class="block w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm shadow-sm placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-teal-500 focus:border-teal-500" placeholder="مثال: محمد الأحمد">
+            </div>
+            <div>
+              <label for="phone" class="block text-sm font-medium text-slate-700 mb-1">رقم الهاتف</label>
+              <input type="tel" id="phone" class="block w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm shadow-sm placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-teal-500 focus:border-teal-500" placeholder="مثال: 05xxxxxxx">
+            </div>
+          </div>
+          
+          <div>
+            <label for="city" class="block text-sm font-medium text-slate-700 mb-1">المدينة</label>
+            <input type="text" id="city" class="block w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm shadow-sm placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-teal-500 focus:border-teal-500" placeholder="مثال: الرياض">
+          </div>
+
+          <div>
+            <label for="address" class="block text-sm font-medium text-slate-700 mb-1">العنوان التفصيلي</label>
+            <input type="text" id="address" class="block w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm shadow-sm placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-teal-500 focus:border-teal-500" placeholder="اسم الشارع، رقم المبنى، الحي">
+          </div>
+
+          <div>
+            <label for="landmark" class="block text-sm font-medium text-slate-700 mb-1">أقرب معلم (اختياري)</label>
+            <input type="text" id="landmark" class="block w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm shadow-sm placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-teal-500 focus:border-teal-500" placeholder="بجانب المسجد الكبير">
+          </div>
+
+          <div id="msg" class="text-sm pt-2"></div>
+        </div>
+      </div>
+
+      <div class="bg-slate-50 px-6 py-4 flex justify-end">
+        <button id="save" class="inline-flex items-center justify-center bg-teal-600 hover:bg-teal-700 focus:ring-4 focus:ring-teal-500/50 text-white text-sm font-semibold rounded-lg px-6 py-2 transition-colors">
+          حفظ التغييرات
+        </button>
+      </div>
+    </div>
+  </main>
+  <section class="max-w-2xl mx-auto py-10 px-4">
+    <h2 class="text-2xl font-bold text-teal-800 mb-6">دوراتي المسجلة</h2>
+    <div id="myCoursesList" class="space-y-4">
+      <div class="flex items-center gap-4 bg-white p-3 rounded-lg shadow-sm">
+        <div class="w-24 h-16 bg-slate-200 rounded animate-pulse"></div>
+        <div class="flex-1 space-y-2">
+          <div class="h-5 w-3/4 bg-slate-200 rounded animate-pulse"></div>
+          <div class="h-4 w-1/2 bg-slate-200 rounded animate-pulse"></div>
+        </div>
+        <div class="h-9 w-28 bg-slate-200 rounded-full animate-pulse"></div>
+      </div>
+    </div>
+  </section>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="assets/js/firebase-config.js"></script>
+  <script src="assets/js/auth-fetch.js"></script>
+
+  <script src="assets/js/profile.js" defer></script>
+</body>
+</html>

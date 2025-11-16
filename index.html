@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>منصة عين الأصالة | Ihsan Educational Platform (عين الأصالة)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="assets/js/tailwind-config.js"></script>
+  <link rel="stylesheet" href="assets/css/styles.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+</head>
+
+  <body class="font-sans bg-slate-50 text-slate-800 antialiased pt-16">
+
+    <div id="announcement-bar" class="hidden fixed top-0 inset-x-0 z-[60] bg-teal-700 text-white text-sm shadow-lg h-10">
+      <div class="swiper ann-swiper h-full flex items-center justify-center">
+        <div class="swiper-wrapper" id="announcement-slides">
+          </div>
+      </div>
+      <button id="close-announcement" class="absolute top-1/2 -translate-y-1/2 right-3 text-white/70 hover:text-white z-10">&times;</button>
+    </div>
+  
+  <header class="fixed top-0 inset-x-0 z-50 bg-white/80 backdrop-blur border-b border-slate-200/80">
+    <div class="max-w-7xl mx-auto">
+      <div class="relative flex items-center justify-between h-16 px-2">
+        <div class="flex items-center justify-end pr-2">
+          <a href="index.html#home" class="text-teal-800 font-extrabold text-xl hover:text-teal-700 transition">منصة عين الأصالة</a>
+        </div>
+        <nav class="hidden md:flex items-center justify-center gap-6">
+          <a href="index.html#home" class="text-slate-700 hover:text-teal-700 font-medium">الرئيسية</a>
+          <a href="courses.html" class="text-slate-700 hover:text-teal-700 font-medium">الدورات</a>
+          <a href="articles.html" class="text-slate-700 hover:text-teal-700 font-medium">المقالات</a>
+          <a href="books.html" class="text-slate-700 hover:text-teal-700 font-medium">متجر الكتب</a>
+          <a href="index.html#consultations" class="text-slate-700 hover:text-teal-700 font-medium">الاستشارات</a>
+          <div class="relative group">
+            <button type="button" class="inline-flex items-center gap-1 text-slate-700 hover:text-teal-700 font-medium">طلباتي
+              <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.25 8.27a.75.75 0 01-.02-1.06z" clip-rule="evenodd"/></svg>
+            </button>
+            <div class="absolute right-0 mt-2 w-44 bg-white border border-slate-200 rounded-lg shadow-lg py-2 hidden group-hover:block group-focus-within:block z-50">
+                <a href="orders.html" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">كل الطلبات</a>
+                <a href="cart.html" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">السلة
+                  <span id="cartCount" class="ml-2 inline-flex items-center justify-center min-w-[1.5rem] h-6 rounded-full bg-amber-500 text-white text-xs px-2">0</span>
+                </a>
+            </div>
+          </div>
+        </nav>
+        <div class="flex items-center justify-start pl-2 gap-3">
+          <a id="navProfile" href="profile.html" class="hidden text-sm font-semibold text-slate-700 hover:text-teal-700">حسابي</a>
+          <a id="loginBtn" href="login.html" class="inline-flex bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold rounded-full px-4 py-2">تسجيل الدخول</a>
+          <button id="menuToggle" class="md:hidden inline-flex items-center justify-center w-10 h-10 rounded-md border border-slate-300 text-slate-700 hover:bg-slate-100"><svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path></svg></button>
+        </div>
+      </div>
+      <nav id="mobileMenu" class="md:hidden hidden border-b border-slate-200 shadow-sm bg-white">
+        <div class="flex flex-col divide-y divide-slate-200">
+          <a href="index.html#home" class="px-5 py-3 hover:bg-slate-50">الرئيسية</a>
+          <a href="courses.html" class="px-5 py-3 hover:bg-slate-50">الدورات</a>
+          <a href="articles.html" class="px-5 py-3 hover:bg-slate-50">المقالات</a>
+          <a href="books.html" class="px-5 py-3 hover:bg-slate-50">متجر الكتب</a>
+          <a href="index.html#consultations" class="px-5 py-3 hover:bg-slate-50">الاستشارات</a>
+          <a href="orders.html" class="px-5 py-3 hover:bg-slate-50">كل الطلبات</a>
+          <a href="cart.html" class="px-5 py-3 hover:bg-slate-50">السلة</a>
+          <a id="mobileProfile" href="profile.html" class="hidden px-5 py-3 hover:bg-slate-50">حسابي</a>
+          <a id="mobileLogin" href="login.html" class="px-5 py-3 hover:bg-slate-50">تسجيل الدخول</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section id="home" class="relative min-h-[70vh] flex items-center overflow-hidden">
+      <div class="swiper hero-swiper absolute inset-0 w-full h-full">
+        <div class="swiper-wrapper">
+          <div class="swiper-slide bg-cover bg-center" style="background-image: url('assets/img/المسجد الاقصى.jpg');"></div>
+          <div class="swiper-slide bg-cover bg-center" style="background-image: url('assets/img/المسجد النبوي.jpg');"></div>
+          <div class="swiper-slide bg-cover bg-center" style="background-image: url('assets/img/مكة.jpg');"></div>
+        </div>
+      </div>
+    
+      <div class="absolute inset-0 bg-teal-900/75"></div>
+    
+      <div class="relative z-10 max-w-4xl mx-auto text-center text-white px-4">
+        <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold leading-tight drop-shadow-lg text-outline">تعلم علوم الشريعة بأسلوب عصري</h1>
+        <p class="mt-4 text-base sm:text-lg md:text-xl text-slate-100/90 drop-shadow-md">دورات متخصصة، مقالات رصينة، وكتب مختارة بإشراف نخبة من العلماء والمدرسين.</p>
+        <div class="mt-8">
+          <a href="courses.html" class="inline-flex items-center bg-amber-500 hover:bg-amber-600 text-white font-semibold px-6 py-3 rounded-full transition">اكتشف الدورات</a>
+        </div>
+      </div>
+    </section>
+    <section id="courses" class="py-16 bg-white"><div class="max-w-7xl mx-auto"><div class="text-center mb-10"><h2 class="text-2xl md:text-3xl font-extrabold text-teal-800">الدورات</h2><p class="mt-3 text-slate-600">مجموعة من البرامج التعليمية في علوم الشريعة بمحتوى تفاعلي ومنهجي.</p></div><div id="homeCourses" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="bg-white rounded-xl ring-1 ring-slate-200 overflow-hidden shadow-sm"><div class="w-full h-48 bg-slate-200 animate-pulse"></div><div class="p-5 space-y-3"><div class="h-6 w-3/4 bg-slate-200 rounded animate-pulse"></div><div class="h-4 w-1/2 bg-slate-200 rounded animate-pulse"></div><div class="flex justify-between items-center pt-2"><div class="h-6 w-1/4 bg-slate-200 rounded animate-pulse"></div><div class="h-8 w-1/3 bg-slate-200 rounded-full animate-pulse"></div></div></div></div>
+    <div class="bg-white rounded-xl ring-1 ring-slate-200 overflow-hidden shadow-sm"><div class="w-full h-48 bg-slate-200 animate-pulse"></div><div class="p-5 space-y-3"><div class="h-6 w-3/4 bg-slate-200 rounded animate-pulse"></div><div class="h-4 w-1/2 bg-slate-200 rounded animate-pulse"></div><div class="flex justify-between items-center pt-2"><div class="h-6 w-1/4 bg-slate-200 rounded animate-pulse"></div><div class="h-8 w-1/3 bg-slate-200 rounded-full animate-pulse"></div></div></div></div>
+    <div class="bg-white rounded-xl ring-1 ring-slate-200 overflow-hidden shadow-sm"><div class="w-full h-48 bg-slate-200 animate-pulse"></div><div class="p-5 space-y-3"><div class="h-6 w-3/4 bg-slate-200 rounded animate-pulse"></div><div class="h-4 w-1/2 bg-slate-200 rounded animate-pulse"></div><div class="flex justify-between items-center pt-2"><div class="h-6 w-1/4 bg-slate-200 rounded animate-pulse"></div><div class="h-8 w-1/3 bg-slate-200 rounded-full animate-pulse"></div></div></div></div>
+</div></div></section>
+    <section id="articles" class="py-16 bg-slate-50"><div class="max-w-7xl mx-auto px-4"><div class="text-center mb-10"><h2 class="text-2xl md:text-3xl font-extrabold text-teal-800">أحدث المقالات</h2></div><div id="homeArticles" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="bg-white rounded-xl ring-1 ring-slate-200 overflow-hidden shadow-sm"><div class="w-full h-48 bg-slate-200 animate-pulse"></div><div class="p-4"><div class="h-6 w-3/4 bg-slate-200 rounded animate-pulse"></div></div></div>
+    <div class="bg-white rounded-xl ring-1 ring-slate-200 overflow-hidden shadow-sm"><div class="w-full h-48 bg-slate-200 animate-pulse"></div><div class="p-4"><div class="h-6 w-3/4 bg-slate-200 rounded animate-pulse"></div></div></div>
+    <div class="bg-white rounded-xl ring-1 ring-slate-200 overflow-hidden shadow-sm"><div class="w-full h-48 bg-slate-200 animate-pulse"></div><div class="p-4"><div class="h-6 w-3/4 bg-slate-200 rounded animate-pulse"></div></div></div>
+</div><div class="text-center mt-10"><a href="articles.html" class="inline-flex items-center bg-white hover:bg-slate-100 text-teal-800 font-semibold px-6 py-3 rounded-full transition ring-1 ring-slate-200">عرض كل المقالات</a></div></div></section>
+    <section id="bookstore" class="py-16 bg-white"><div class="max-w-7xl mx-auto"><div class="text-center mb-10"><h2 class="text-2xl md:text-3xl font-extrabold text-teal-800">متجر الكتب</h2><p class="mt-3 text-slate-600">آخر الإصدارات المضافة للمتجر.</p></div><div id="homeBooks" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="bg-white rounded-xl ring-1 ring-slate-200 overflow-hidden shadow-sm"><div class="w-full h-72 bg-slate-200 animate-pulse"></div><div class="p-5 space-y-3"><div class="h-6 w-3/4 bg-slate-200 rounded animate-pulse"></div><div class="h-4 w-1/2 bg-slate-200 rounded animate-pulse"></div><div class="flex justify-between items-center pt-2"><div class="h-6 w-1/4 bg-slate-200 rounded animate-pulse"></div><div class="h-10 w-2/5 bg-slate-200 rounded-full animate-pulse"></div></div></div></div>
+    <div class="bg-white rounded-xl ring-1 ring-slate-200 overflow-hidden shadow-sm"><div class="w-full h-72 bg-slate-200 animate-pulse"></div><div class="p-5 space-y-3"><div class="h-6 w-3/4 bg-slate-200 rounded animate-pulse"></div><div class="h-4 w-1/2 bg-slate-200 rounded animate-pulse"></div><div class="flex justify-between items-center pt-2"><div class="h-6 w-1/4 bg-slate-200 rounded animate-pulse"></div><div class="h-10 w-2/5 bg-slate-200 rounded-full animate-pulse"></div></div></div></div>
+    <div class="bg-white rounded-xl ring-1 ring-slate-200 overflow-hidden shadow-sm"><div class="w-full h-72 bg-slate-200 animate-pulse"></div><div class="p-5 space-y-3"><div class="h-6 w-3/4 bg-slate-200 rounded animate-pulse"></div><div class="h-4 w-1/2 bg-slate-200 rounded animate-pulse"></div><div class="flex justify-between items-center pt-2"><div class="h-6 w-1/4 bg-slate-200 rounded animate-pulse"></div><div class="h-10 w-2/5 bg-slate-200 rounded-full animate-pulse"></div></div></div></div>
+</div><div class="text-center mt-8"><a href="books.html" class="inline-flex items-center bg-amber-500 hover:bg-amber-600 text-white font-semibold px-6 py-3 rounded-full transition">مشاهدة كل الكتب</a></div></div></section>
+    <section id="consultations" class="py-16 bg-teal-800 text-white"><div class="max-w-5xl mx-auto px-4"><div class="flex flex-col md:flex-row items-start md:items-center gap-6"><div class="flex items-center justify-center w-16 h-16 rounded-2xl bg-teal-700 ring-1 ring-teal-600/50"><svg class="w-9 h-9 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M8 10h8M8 14h5M7 20l-4 1 1-4V6a2 2 0 012-2h12a2 2 0 012 2v8a2 2 0 01-2 2H7z"/></svg></div><div class="flex-1"><h2 class="text-2xl md:text-3xl font-extrabold">استشارات واستفسارات</h2><p class="mt-3 text-teal-100">هل لديك سؤال شرعي أو استشارة تعليمية؟ فريقنا يقدم لك إرشاداً موثوقاً ومنهجياً عبر المحادثة المباشرة.</p></div><div class="mt-4 md:mt-0"><button id="startChatBtn" class="relative inline-flex items-center bg-amber-500 hover:bg-amber-400 text-teal-900 font-extrabold px-6 py-3 rounded-full transition"><span class="z-10">ابدأ المحادثة الآن</span><span id="chatNotificationBadge" class="absolute -top-1 -right-1 flex h-4 w-4"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span><span class="relative inline-flex rounded-full h-4 w-4 bg-red-500"></span></span></button></div></div></div></section>
+  </main>
+  
+  <footer class="bg-teal-900 text-slate-200">
+    <div class="max-w-7xl mx-auto px-4 py-6 text-center text-sm">
+      © <span id="year"></span> منصة عين الأصالة. جميع الحقوق محفوظة.
+    </div>
+  </footer>
+
+  <div id="chatWidget" class="hidden fixed bottom-5 right-5 w-96 h-[60vh] max-h-[500px] bg-white rounded-xl shadow-2xl border border-slate-200 flex flex-col transition-all duration-300 transform">
+    <div class="flex items-center justify-between p-3 bg-teal-700 text-white rounded-t-xl flex-shrink-0"><h3 class="font-bold text-sm">محادثة مباشرة</h3><button id="chatClose" type="button" class="text-white hover:bg-teal-600 rounded-full p-1"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></div>
+    <div id="chatMessages" class="flex-grow p-4 space-y-3 overflow-y-auto flex flex-col"></div>
+    <div class="p-3 border-t border-slate-200 flex-shrink-0"><form id="chatForm" class="flex items-center gap-2"><input id="chatInput" type="text" placeholder="اكتب رسالتك..." class="flex-grow w-full px-3 py-2 bg-slate-100 border border-slate-300 rounded-full text-sm" autocomplete="off"><button id="chatSend" type="submit" class="flex-shrink-0 bg-teal-600 hover:bg-teal-700 text-white rounded-full p-2"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path></svg></button></form></div>
+  </div>
+  
+  <audio id="chatNotificationSound" src="assets/audio/notification.mp3" preload="auto"></audio>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="assets/js/firebase-config.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  
+  <script src="assets/js/user-state.js" defer></script>
+  <script src="assets/js/auth-fetch.js"></script>
+  <script src="assets/js/home.js" defer></script>
+  <script src="assets/js/script.js" defer></script>
+
+  <script>
+    // Handles the login/logout buttons
+    document.addEventListener('DOMContentLoaded', () => {
+      const menuToggle = document.getElementById('menuToggle');
+      const mobileMenu = document.getElementById('mobileMenu');
+      const loginBtn    = document.getElementById('loginBtn');
+      const navProfile  = document.getElementById('navProfile');
+      const mobileProfile = document.getElementById('mobileProfile');
+      const mobileLogin   = document.getElementById('mobileLogin');
+
+      function setUI(isLoggedIn) {
+        if (navProfile)   navProfile.classList.toggle('hidden', !isLoggedIn);
+        if (loginBtn)     loginBtn.classList.toggle('hidden', isLoggedIn);
+        if (mobileProfile) mobileProfile.classList.toggle('hidden', !isLoggedIn);
+        if (mobileLogin)   mobileLogin.classList.toggle('hidden', isLoggedIn);
+      }
+      
+      try {
+        const auth = firebase?.auth?.();
+        if (auth) auth.onAuthStateChanged(user => setUI(!!user));
+        else setUI(false);
+      } catch (e) {
+        console.warn('Auth init failed:', e);
+        setUI(false);
+      }
+
+      const y = document.getElementById('year');
+      if (y) y.textContent = new Date().getFullYear();
+    });
+
+    // Initialize Swiper
+   // Initialize Hero Swiper
+const heroSwiper = new Swiper('.hero-swiper', { // <-- تم التعديل هنا
+  loop: true,
+  effect: 'fade',
+  speed: 1000,
+  autoplay: {
+    delay: 4000,
+    disableOnInteraction: false,
+  },
+});
+  </script>
+
+</body>
+</html>

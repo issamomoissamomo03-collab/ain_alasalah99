@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>تسجيل دخول الأدمن | منصة عين الأصالة</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="font-sans bg-slate-100 text-slate-800 antialiased">
+  <main class="min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-md bg-white rounded-2xl ring-1 ring-slate-200 shadow-xl p-6">
+      <h1 class="text-xl font-extrabold text-teal-800 mb-1">تسجيل دخول الأدمن</h1>
+      <p id="loginNote" class="text-sm text-slate-600 mb-4">أدخل بحساب الأدمن المصرّح به للوصول للوحة الإدارة.</p>
+      <div class="space-y-3">
+        <button id="adminLoginBtn" class="w-full px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-lg">تسجيل الدخول باستخدام Google</button>
+        <div id="loginMsg" class="text-sm"></div>
+      </div>
+      <p class="text-xs text-slate-500 mt-4">هذه الصفحة مخصّصة للحسابات المخوّلة فقط. أي محاولة دخول دون صلاحية سيتم رفضها.</p>
+    </div>
+  </main>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="assets/js/firebase-config.js"></script>
+  <script src="assets/js/auth-fetch.js"></script>
+  <script src="assets/js/admin-login.js"></script>
+</body>
+<html>
+

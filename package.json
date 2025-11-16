@@ -1,0 +1,16 @@
+{
+    "name": "ihsan-web",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "start": "node server.js"
+    },
+    "dependencies": {
+        "dotenv": "^17.2.2",
+        "express": "^4.21.2",
+        "firebase-admin": "^13.5.0",
+        "http-proxy-middleware": "^3.0.0",
+        "mongodb": "^6.19.0",
+        "mongoose": "^8.18.0"
+    }
+}

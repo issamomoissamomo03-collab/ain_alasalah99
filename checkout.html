@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>إتمام الدفع | منصة عين الأصالة</title>
+
+  <!-- Google Fonts: Cairo -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="assets/js/tailwind-config.js"></script>
+
+  <link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+<body class="font-sans bg-slate-50 text-slate-800 antialiased">
+
+  <main class="max-w-lg mx-auto py-16 px-4 text-center">
+    <div id="result" class="text-slate-700"></div>
+  </main>
+  <script src="assets/js/orders.js" defer></script>
+
+  <script src="assets/js/checkout.js" defer></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const menuToggle = document.getElementById('menuToggle');
+      const mobileMenu = document.getElementById('mobileMenu');
+      const loginBtn    = document.getElementById('loginBtn');
+      const navProfile  = document.getElementById('navProfile');
+      const mobileProfile = document.getElementById('mobileProfile');
+      const mobileLogin   = document.getElementById('mobileLogin');
+
+      // 1) Mobile menu toggle
+      if (menuToggle && mobileMenu) {
+        menuToggle.addEventListener('click', () => {
+          mobileMenu.classList.toggle('hidden');
+        });
+      }
+
+      // 2) Auth-driven UI using Firebase
+      function setUI(isLoggedIn) {
+        if (navProfile)   navProfile.classList.toggle('hidden', !isLoggedIn);
+        if (loginBtn)     loginBtn.classList.toggle('hidden', isLoggedIn);
+        if (mobileProfile) mobileProfile.classList.toggle('hidden', !isLoggedIn);
+        if (mobileLogin)   mobileLogin.classList.toggle('hidden', isLoggedIn);
+      }
+
+      try {
+        const auth = firebase?.auth?.();
+        if (auth) {
+          auth.onAuthStateChanged(user => setUI(!!user));
+        } else {
+          setUI(false);
+        }
+      } catch (e) {
+        console.warn('Auth init failed:', e);
+        setUI(false);
+      }
+
+      // سنة الفوتر
+      const y = document.getElementById('year');
+      if (y) y.textContent = new Date().getFullYear();
+    });
+  </script>
+</body>
+</html>

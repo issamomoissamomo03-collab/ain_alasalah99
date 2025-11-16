@@ -1,0 +1,5 @@
+.text-outline {
+    /* This adds a thin 1px black stroke around the letters */
+    -webkit-text-stroke: 1px rgba(0, 0, 0, 0.6);
+    paint-order: stroke fill;
+  }
