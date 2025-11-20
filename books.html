@@ -56,11 +56,19 @@
 
         <!-- Left: Profile / Cart / Login + Hamburger -->
         <div class="flex items-center justify-start pl-2 gap-3">
-          <!-- يظهر بعد تسجيل الدخول -->
-          <a id="navProfile" href="profile.html" class="hidden text-sm font-semibold text-slate-700 hover:text-teal-700">
-            حسابي
-          </a>
-
+          <!-- Desktop: User menu dropdown (shown when logged in) -->
+          <div id="desktopUserMenu" class="relative hidden">
+            <button id="desktopUserMenuBtn" type="button" class="inline-flex items-center gap-1 text-sm font-semibold text-slate-700 hover:text-teal-700">
+              حسابي
+              <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.25 8.27a.75.75 0 01-.02-1.06z" clip-rule="evenodd"/></svg>
+            </button>
+            <div id="desktopUserDropdown" class="absolute left-0 mt-2 w-48 bg-white border border-slate-200 rounded-lg shadow-lg py-2 hidden z-50">
+              <a href="profile.html" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">الملف الشخصي</a>
+              <a href="orders.html" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">طلباتي</a>
+              <a href="cart.html" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">السلة</a>
+              <button id="desktopLogoutBtn" class="w-full text-start px-4 py-2 text-sm text-rose-700 hover:bg-rose-50">تسجيل الخروج</button>
+            </div>
+          </div>
           <!-- السلة مع عدّاد -->
 
 
@@ -90,6 +98,7 @@
           <a href="cart.html" class="px-5 py-3 hover:bg-slate-50">السلة</a>
           <a id="mobileProfile" href="profile.html" class="hidden px-5 py-3 hover:bg-slate-50">حسابي</a>
           <a id="mobileLogin" href="login.html" class="px-5 py-3 hover:bg-slate-50">تسجيل الدخول</a>
+          <button id="mobileLogout" class="hidden text-right px-5 py-3 hover:bg-rose-50 text-rose-700">تسجيل الخروج</button>
         </div>
       </nav>
     </div>
@@ -120,7 +129,7 @@
   <script src="assets/js/firebase-config.js"></script>
   <script src="assets/js/user-state.js" defer></script>
   <script src="assets/js/auth-fetch.js"></script>
-  <script src="assets/js/orders.js" defer></script>
+  <script src="assets/js/login-prompt.js"></script>
 
   <script src="assets/js/books.js" defer></script>
   <script>
@@ -140,12 +149,42 @@
       }
 
       // 2) Auth-driven UI using Firebase
+      const mobileLogout = document.getElementById('mobileLogout');
+      const desktopUserMenu = document.getElementById('desktopUserMenu');
+      const desktopUserMenuBtn = document.getElementById('desktopUserMenuBtn');
+      const desktopUserDropdown = document.getElementById('desktopUserDropdown');
+      const desktopLogoutBtn = document.getElementById('desktopLogoutBtn');
+      
       function setUI(isLoggedIn) {
-        if (navProfile)   navProfile.classList.toggle('hidden', !isLoggedIn);
         if (loginBtn)     loginBtn.classList.toggle('hidden', isLoggedIn);
         if (mobileProfile) mobileProfile.classList.toggle('hidden', !isLoggedIn);
         if (mobileLogin)   mobileLogin.classList.toggle('hidden', isLoggedIn);
+        if (mobileLogout)  mobileLogout.classList.toggle('hidden', !isLoggedIn);
+        if (desktopUserMenu) desktopUserMenu.classList.toggle('hidden', !isLoggedIn);
       }
+      
+      // Desktop dropdown menu toggle
+      desktopUserMenuBtn?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        desktopUserDropdown?.classList.toggle('hidden');
+      });
+      
+      // Close dropdown when clicking outside
+      document.addEventListener('click', (e) => {
+        if (desktopUserDropdown && !desktopUserDropdown.classList.contains('hidden')) {
+          if (!desktopUserMenu?.contains(e.target)) {
+            desktopUserDropdown.classList.add('hidden');
+          }
+        }
+      });
+      
+      // Desktop logout button
+      desktopLogoutBtn?.addEventListener('click', async (e) => {
+        e.preventDefault();
+        if (typeof window.logout === 'function') {
+          await window.logout();
+        }
+      });
 
       try {
         const auth = firebase?.auth?.();

@@ -41,11 +41,13 @@
       }
 
       // 2) Auth-driven UI using Firebase
+      const mobileLogout = document.getElementById('mobileLogout');
       function setUI(isLoggedIn) {
         if (navProfile)   navProfile.classList.toggle('hidden', !isLoggedIn);
         if (loginBtn)     loginBtn.classList.toggle('hidden', isLoggedIn);
         if (mobileProfile) mobileProfile.classList.toggle('hidden', !isLoggedIn);
         if (mobileLogin)   mobileLogin.classList.toggle('hidden', isLoggedIn);
+        if (mobileLogout)  mobileLogout.classList.toggle('hidden', !isLoggedIn);
       }
 
       try {

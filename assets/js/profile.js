@@ -34,14 +34,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- NEW: Logout Button Logic ---
   const logoutBtn = document.getElementById('logoutBtn');
-  logoutBtn?.addEventListener('click', () => {
-    firebase.auth().signOut().then(() => {
-      console.log('User signed out successfully.');
-      // Redirect to login page after logout
-      window.location.href = '/index.html';    }).catch((error) => {
-      console.error('Sign out error:', error);
-      alert('حدث خطأ أثناء تسجيل الخروج.');
-    });
+  logoutBtn?.addEventListener('click', async (e) => {
+    e.preventDefault();
+    await window.logout();
   });
 
 

@@ -191,8 +191,8 @@ document.querySelectorAll('a[data-scroll]').forEach(anchor => {
     if (announcements && announcements.length > 0) {
      // assets/js/script.js
   slidesContainer.innerHTML = announcements.map(ann => `
-    <div class="swiper-slide text-center">
-      <a href="${ann.link || '#'}" ${ann.link ? '' : 'style="pointer-events:none;"'} class="hover:underline">${ann.text}</a>
+    <div class="swiper-slide flex items-center justify-center px-2">
+      <a href="${ann.link || '#'}" ${ann.link ? '' : 'style="pointer-events:none;"'} class="text-xs md:text-sm leading-relaxed text-center hover:underline break-words max-w-full">${ann.text}</a>
     </div>
   `).join('');
 
@@ -207,13 +207,25 @@ document.querySelectorAll('a[data-scroll]').forEach(anchor => {
         },
       });
 
-      // استخدام قيم ثابتة ومحددة (ارتفاع الشريط 40px + ارتفاع الهيدر 64px)
-      if (header) header.style.top = '40px';
-      document.body.style.paddingTop = '104px'; // 40px + 64px
+      // دالة لتحديث المواضع حسب ارتفاع الشريط
+      function updatePositions() {
+        if (bar && !bar.classList.contains('hidden')) {
+          const barHeight = bar.offsetHeight;
+          if (header) header.style.top = `${barHeight}px`;
+          document.body.style.paddingTop = `${barHeight + 64}px`; // ارتفاع الشريط + ارتفاع الهيدر
+        }
+      }
+      
+      // تحديث المواضع بعد تحميل الشريط
+      setTimeout(updatePositions, 100);
+      
+      // تحديث المواضع عند تغيير حجم الشاشة (responsive)
+      window.addEventListener('resize', updatePositions);
     }
   } catch(e) { console.error("Could not fetch announcements.", e); }
 
   closeBtn.addEventListener('click', () => {
+      bar.classList.add('hidden');
       bar.style.display = 'none';
       if (header) header.style.top = '0px';
       document.body.style.paddingTop = '64px'; // Reset to header height only

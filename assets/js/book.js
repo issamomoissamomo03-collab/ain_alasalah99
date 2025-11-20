@@ -77,8 +77,42 @@ function starsHtml(n){
 
   document.getElementById('bookDesc').textContent = book.description || '—';
 
-  // زر الإضافة للسلة
-  document.getElementById('addBtn').addEventListener('click', ()=>{
+  // زر الإضافة للسلة - يتطلب تسجيل الدخول
+  document.getElementById('addBtn').addEventListener('click', async ()=>{
+    // التحقق من تسجيل الدخول - فقط عند الضغط على الزر
+    try {
+      if (firebase && firebase.auth) {
+        let user = firebase.auth().currentUser;
+        if (!user) {
+          // Wait for auth to initialize (with timeout)
+          await new Promise((resolve) => {
+            const unsub = firebase.auth().onAuthStateChanged(() => {
+              unsub();
+              resolve();
+            });
+            setTimeout(resolve, 1000); // Timeout after 1 second
+          });
+          
+          user = firebase.auth().currentUser;
+          if (!user) {
+            const shouldLogin = await showLoginPrompt({ 
+              redirectUrl: location.pathname + location.search 
+            });
+            if (!shouldLogin) return;
+            // If user confirms, redirect happens inside showLoginPrompt
+            return;
+          }
+        }
+      }
+    } catch (err) {
+      const shouldLogin = await showLoginPrompt({ 
+        redirectUrl: location.pathname + location.search 
+      });
+      if (!shouldLogin) return;
+      // If user confirms, redirect happens inside showLoginPrompt
+      return;
+    }
+    
     const qty = Math.max(1, Number(document.getElementById('qty').value||1));
     addToCart({ id: book._id, title: book.title, price: book.price||0, coverUrl: book.coverUrl||'' }, qty);
   });

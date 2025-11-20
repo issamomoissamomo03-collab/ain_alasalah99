@@ -65,9 +65,42 @@ updateCartBadge();
   `).join('');
 
   // لاحظ: هنا نستخدم .addBtn (كان عندك .addToCart بالغلط)
-  grid.addEventListener('click', (e)=>{
+  grid.addEventListener('click', async (e)=>{
     const btn = e.target.closest('.addBtn');
     if(!btn) return;
+    
+    // التحقق من تسجيل الدخول - فقط عند الضغط على الزر
+    try {
+      // Wait for auth to be ready without forcing redirect
+      if (firebase && firebase.auth) {
+        const user = firebase.auth().currentUser;
+        if (!user) {
+          // Check if auth is still initializing
+          await new Promise((resolve) => {
+            const unsub = firebase.auth().onAuthStateChanged(() => {
+              unsub();
+              resolve();
+            });
+            setTimeout(resolve, 1000); // Timeout after 1 second
+          });
+          
+          const currentUser = firebase.auth().currentUser;
+          if (!currentUser) {
+            const shouldLogin = await showLoginPrompt({ redirectUrl: 'books.html' });
+            if (!shouldLogin) return;
+            // If user confirms, redirect happens inside showLoginPrompt
+            return;
+          }
+        }
+      }
+    } catch (err) {
+      // If auth check fails, just prompt login
+      const shouldLogin = await showLoginPrompt({ redirectUrl: 'books.html' });
+      if (!shouldLogin) return;
+      // If user confirms, redirect happens inside showLoginPrompt
+      return;
+    }
+    
     addToCart({
       id: btn.dataset.id,
       title: btn.dataset.title,
