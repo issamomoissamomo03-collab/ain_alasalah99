@@ -7,13 +7,28 @@
 /* تحسين شريط الإعلانات للموبايل */
 #announcement-bar {
   overflow: hidden;
+  max-height: 80px;
+  display: flex;
+  align-items: center;
+}
+
+@media (min-width: 768px) {
+  #announcement-bar {
+    max-height: 40px;
+  }
+}
+
+#announcement-bar .swiper {
+  height: 100%;
+  width: 100%;
 }
 
 #announcement-bar .swiper-slide {
-  height: auto;
+  height: auto !important;
   display: flex;
   align-items: center;
   justify-content: center;
+  min-height: fit-content;
 }
 
 #announcement-bar .swiper-slide a {
@@ -22,13 +37,15 @@
   hyphens: auto;
   display: block;
   padding: 0.25rem 0;
+  max-width: 100%;
+  white-space: normal;
 }
 
 @media (max-width: 768px) {
   #announcement-bar {
-    min-height: auto;
     padding-top: 0.5rem;
     padding-bottom: 0.5rem;
+    max-height: 80px;
   }
   
   #announcement-bar .swiper {

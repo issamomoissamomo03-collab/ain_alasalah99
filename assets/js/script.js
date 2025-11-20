@@ -191,8 +191,8 @@ document.querySelectorAll('a[data-scroll]').forEach(anchor => {
     if (announcements && announcements.length > 0) {
      // assets/js/script.js
   slidesContainer.innerHTML = announcements.map(ann => `
-    <div class="swiper-slide flex items-center justify-center px-2">
-      <a href="${ann.link || '#'}" ${ann.link ? '' : 'style="pointer-events:none;"'} class="text-xs md:text-sm leading-relaxed text-center hover:underline break-words max-w-full">${ann.text}</a>
+    <div class="swiper-slide flex items-center justify-center px-2" style="height: auto; min-height: fit-content;">
+      <a href="${ann.link || '#'}" ${ann.link ? '' : 'style="pointer-events:none;"'} class="text-xs md:text-sm leading-relaxed text-center hover:underline break-words max-w-full whitespace-normal">${ann.text}</a>
     </div>
   `).join('');
 
@@ -209,18 +209,32 @@ document.querySelectorAll('a[data-scroll]').forEach(anchor => {
 
       // دالة لتحديث المواضع حسب ارتفاع الشريط
       function updatePositions() {
-        if (bar && !bar.classList.contains('hidden')) {
+        if (bar && !bar.classList.contains('hidden') && bar.offsetHeight > 0) {
           const barHeight = bar.offsetHeight;
-          if (header) header.style.top = `${barHeight}px`;
-          document.body.style.paddingTop = `${barHeight + 64}px`; // ارتفاع الشريط + ارتفاع الهيدر
+          // التأكد من أن الارتفاع منطقي (بين 30 و 100 بكسل)
+          if (barHeight >= 30 && barHeight <= 100) {
+            if (header) header.style.top = `${barHeight}px`;
+            document.body.style.paddingTop = `${barHeight + 64}px`; // ارتفاع الشريط + ارتفاع الهيدر
+          } else {
+            // إذا كان الارتفاع غير منطقي، استخدم قيم افتراضية
+            const defaultHeight = window.innerWidth < 768 ? 50 : 40;
+            if (header) header.style.top = `${defaultHeight}px`;
+            document.body.style.paddingTop = `${defaultHeight + 64}px`;
+          }
         }
       }
       
-      // تحديث المواضع بعد تحميل الشريط
+      // تحديث المواضع بعد تحميل الشريط مع عدة محاولات
       setTimeout(updatePositions, 100);
+      setTimeout(updatePositions, 300);
+      setTimeout(updatePositions, 500);
       
       // تحديث المواضع عند تغيير حجم الشاشة (responsive)
-      window.addEventListener('resize', updatePositions);
+      let resizeTimeout;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(updatePositions, 100);
+      });
     }
   } catch(e) { console.error("Could not fetch announcements.", e); }
 
