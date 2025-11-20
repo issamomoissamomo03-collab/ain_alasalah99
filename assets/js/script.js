@@ -191,8 +191,8 @@ document.querySelectorAll('a[data-scroll]').forEach(anchor => {
     if (announcements && announcements.length > 0) {
      // assets/js/script.js
   slidesContainer.innerHTML = announcements.map(ann => `
-    <div class="swiper-slide flex items-center justify-center px-2" style="height: auto; min-height: fit-content;">
-      <a href="${ann.link || '#'}" ${ann.link ? '' : 'style="pointer-events:none;"'} class="text-xs md:text-sm leading-relaxed text-center hover:underline break-words max-w-full whitespace-normal">${ann.text}</a>
+    <div class="swiper-slide text-center mobile-slide">
+      <a href="${ann.link || '#'}" ${ann.link ? '' : 'style="pointer-events:none;"'} class="hover:underline mobile-link">${ann.text}</a>
     </div>
   `).join('');
 
@@ -209,25 +209,34 @@ document.querySelectorAll('a[data-scroll]').forEach(anchor => {
 
       // دالة لتحديث المواضع حسب ارتفاع الشريط
       function updatePositions() {
-        if (bar && !bar.classList.contains('hidden') && bar.offsetHeight > 0) {
-          const barHeight = bar.offsetHeight;
-          // التأكد من أن الارتفاع منطقي (بين 30 و 100 بكسل)
-          if (barHeight >= 30 && barHeight <= 100) {
-            if (header) header.style.top = `${barHeight}px`;
-            document.body.style.paddingTop = `${barHeight + 64}px`; // ارتفاع الشريط + ارتفاع الهيدر
+        if (bar && !bar.classList.contains('hidden')) {
+          const isMobile = window.innerWidth < 768;
+          let barHeight;
+          
+          if (isMobile) {
+            // على الموبايل: حساب الارتفاع الديناميكي
+            barHeight = bar.offsetHeight;
+            if (barHeight >= 30 && barHeight <= 100) {
+              if (header) header.style.top = `${barHeight}px`;
+              document.body.style.paddingTop = `${barHeight + 64}px`;
+            } else {
+              // إذا كان الارتفاع غير منطقي، استخدم قيمة افتراضية للموبايل
+              const defaultMobileHeight = 50;
+              if (header) header.style.top = `${defaultMobileHeight}px`;
+              document.body.style.paddingTop = `${defaultMobileHeight + 64}px`;
+            }
           } else {
-            // إذا كان الارتفاع غير منطقي، استخدم قيم افتراضية
-            const defaultHeight = window.innerWidth < 768 ? 50 : 40;
-            if (header) header.style.top = `${defaultHeight}px`;
-            document.body.style.paddingTop = `${defaultHeight + 64}px`;
+            // على الكمبيوتر: استخدام ارتفاع ثابت 40px كما كان في الأصل
+            barHeight = 40;
+            if (header) header.style.top = `${barHeight}px`;
+            document.body.style.paddingTop = `${barHeight + 64}px`; // 40px + 64px = 104px
           }
         }
       }
       
-      // تحديث المواضع بعد تحميل الشريط مع عدة محاولات
+      // تحديث المواضع بعد تحميل الشريط
       setTimeout(updatePositions, 100);
       setTimeout(updatePositions, 300);
-      setTimeout(updatePositions, 500);
       
       // تحديث المواضع عند تغيير حجم الشاشة (responsive)
       let resizeTimeout;
