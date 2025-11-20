@@ -190,32 +190,34 @@ document.querySelectorAll('a[data-scroll]').forEach(anchor => {
 
     if (announcements && announcements.length > 0) {
      // assets/js/script.js
+  // إنشاء الإعلانات مع تحسينات للموبايل
+  const isMobile = window.innerWidth < 768;
   slidesContainer.innerHTML = announcements.map(ann => `
-    <div class="swiper-slide text-center mobile-slide">
-      <a href="${ann.link || '#'}" ${ann.link ? '' : 'style="pointer-events:none;"'} class="hover:underline mobile-link">${ann.text}</a>
+    <div class="swiper-slide text-center" style="display: flex; align-items: center; justify-content: center; min-height: 100%;">
+      <a href="${ann.link || '#'}" ${ann.link ? '' : 'style="pointer-events:none;"'} class="hover:underline" style="display: block; width: 100%; padding: 0.25rem 0.5rem; ${isMobile ? 'font-size: 0.75rem; line-height: 1.4;' : ''}">
+        ${ann.text}
+      </a>
     </div>
   `).join('');
 
       bar.classList.remove('hidden');
 
-      new Swiper('.ann-swiper', {
-        loop: announcements.length > 1, // تفعيل اللوب فقط لو فيه أكثر من إعلان
-        direction: 'vertical',
-        autoplay: {
-          delay: 5000,
-          disableOnInteraction: false,
-        },
-      });
-
       // دالة لتحديث المواضع حسب ارتفاع الشريط
+      let swiperInstance = null;
       function updatePositions() {
         if (bar && !bar.classList.contains('hidden')) {
-          const isMobile = window.innerWidth < 768;
+          const isMobileDevice = window.innerWidth < 768;
           let barHeight;
           
-          if (isMobile) {
+          if (isMobileDevice) {
             // على الموبايل: حساب الارتفاع الديناميكي
-            barHeight = bar.offsetHeight;
+            // التأكد من أن Swiper قد تم تحديثه
+            if (swiperInstance) {
+              swiperInstance.update();
+            }
+            
+            barHeight = bar.offsetHeight || bar.clientHeight;
+            // التأكد من أن الارتفاع منطقي
             if (barHeight >= 30 && barHeight <= 100) {
               if (header) header.style.top = `${barHeight}px`;
               document.body.style.paddingTop = `${barHeight + 64}px`;
@@ -233,6 +235,101 @@ document.querySelectorAll('a[data-scroll]').forEach(anchor => {
           }
         }
       }
+
+      // تهيئة Swiper مع تحسينات للموبايل
+      const isMobileNow = window.innerWidth < 768;
+      const swiperConfig = {
+        loop: announcements.length > 1, // تفعيل اللوب فقط لو فيه أكثر من إعلان
+        direction: 'vertical',
+        autoplay: {
+          delay: 5000,
+          disableOnInteraction: false,
+          pauseOnMouseEnter: false,
+        },
+        speed: 300,
+        // إعدادات مشتركة
+        spaceBetween: 0,
+        slidesPerView: 1,
+        // تحسينات للموبايل
+        ...(isMobileNow && {
+          autoHeight: false,
+          allowTouchMove: true,
+        }),
+      };
+
+      swiperInstance = new Swiper('.ann-swiper', swiperConfig);
+      
+      // إصلاح المشاكل على الموبايل بعد تحميل Swiper
+      if (isMobileNow) {
+        // تحديث Swiper بعد تحميل المحتوى
+        setTimeout(() => {
+          if (swiperInstance) {
+            swiperInstance.update();
+            updatePositions();
+          }
+        }, 300);
+        
+        // تحديث Swiper عند تغيير الشريحة - إصلاح المشكلة عندما ينتقل الإعلان
+        swiperInstance.on('slideChange', () => {
+          // التأكد من عرض المحتوى عند تغيير الشريحة
+          const activeIndex = swiperInstance.realIndex !== undefined ? swiperInstance.realIndex : swiperInstance.activeIndex;
+          const activeSlide = swiperInstance.slides[activeIndex];
+          
+          if (activeSlide) {
+            // إظهار الشريحة النشطة
+            activeSlide.style.display = 'flex';
+            activeSlide.style.alignItems = 'center';
+            activeSlide.style.justifyContent = 'center';
+            activeSlide.style.opacity = '1';
+            activeSlide.style.visibility = 'visible';
+            
+            // التأكد من أن الرابط واضح
+            const link = activeSlide.querySelector('a');
+            if (link) {
+              link.style.display = 'block';
+              link.style.visibility = 'visible';
+            }
+          }
+          
+          // تحديث Swiper وإعادة حساب الارتفاع
+          setTimeout(() => {
+            swiperInstance.update();
+            updatePositions();
+          }, 150);
+        });
+        
+        // التأكد من عرض الشريحة الأولى عند التحميل
+        setTimeout(() => {
+          if (swiperInstance && swiperInstance.slides && swiperInstance.slides.length > 0) {
+            const firstIndex = swiperInstance.realIndex !== undefined ? swiperInstance.realIndex : 0;
+            const firstSlide = swiperInstance.slides[firstIndex];
+            if (firstSlide) {
+              firstSlide.style.display = 'flex';
+              firstSlide.style.alignItems = 'center';
+              firstSlide.style.justifyContent = 'center';
+              firstSlide.style.opacity = '1';
+              firstSlide.style.visibility = 'visible';
+            }
+            swiperInstance.update();
+          }
+        }, 200);
+        
+        // إعادة تحديث Swiper عند تغيير حجم الشاشة
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+          clearTimeout(resizeTimer);
+          resizeTimer = setTimeout(() => {
+            if (swiperInstance) {
+              swiperInstance.update();
+              updatePositions();
+            }
+          }, 150);
+        });
+      } else {
+        // على الكمبيوتر: استخدام القيم الثابتة
+        updatePositions();
+      }
+
       
       // تحديث المواضع بعد تحميل الشريط
       setTimeout(updatePositions, 100);

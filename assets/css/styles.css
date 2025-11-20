@@ -7,7 +7,7 @@
 /* تحسين شريط الإعلانات للموبايل فقط */
 @media (max-width: 767px) {
   #announcement-bar.mobile-announcement-bar {
-    height: auto !important;
+    height: auto;
     min-height: 40px;
     max-height: 80px;
     padding-top: 0.5rem;
@@ -20,14 +20,31 @@
   #announcement-bar.mobile-announcement-bar .swiper {
     padding-left: 2.5rem;
     padding-right: 2.5rem;
+    height: 100%;
+  }
+  
+  #announcement-bar.mobile-announcement-bar .swiper-wrapper {
+    height: 100%;
+    display: flex;
+    align-items: center;
   }
   
   #announcement-bar.mobile-announcement-bar .swiper-slide {
     height: auto !important;
-    min-height: fit-content;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    min-height: 100%;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0.25rem 0;
+    box-sizing: border-box;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+  
+  #announcement-bar.mobile-announcement-bar .swiper-slide.swiper-slide-active {
+    display: flex !important;
+    opacity: 1 !important;
+    visibility: visible !important;
   }
   
   #announcement-bar.mobile-announcement-bar .swiper-slide a {
@@ -36,9 +53,12 @@
     word-wrap: break-word;
     overflow-wrap: break-word;
     hyphens: auto;
-    display: block;
-    padding: 0.25rem 0;
+    display: block !important;
+    width: 100%;
     max-width: 100%;
     white-space: normal;
+    text-align: center;
+    opacity: 1 !important;
+    visibility: visible !important;
   }
 }
