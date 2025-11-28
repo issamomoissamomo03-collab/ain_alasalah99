@@ -36,6 +36,7 @@
       <a href="#" data-target="sec-consults" class="navbtn">الرسائل</a>
       <a href="#" data-target="sec-enrollments" class="navbtn">طلبات التسجيل</a>
       <a href="#" data-target="sec-live" class="navbtn">الإعلان المباشر</a>
+      <a href="#" data-target="sec-featured-video" class="navbtn">فيديو آخر التحديثات</a>
       <a href="#" data-target="sec-users" class="navbtn">المستخدمون</a>
 
       <div class="mt-6 border-t pt-3">
@@ -290,6 +291,52 @@
           <h3 class="font-bold mb-3">قائمة الإعلانات النشطة</h3>
           <table class="tbl w-full text-sm" id="tblAnnouncements">
             <thead><tr><th>النص</th><th>الحالة</th><th>ينتهي في</th><th>إجراءات</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+      <!-- FEATURED VIDEO -->
+      <section id="sec-featured-video" class="section space-y-4">
+        <h2 class="text-xl font-extrabold text-teal-800">فيديو آخر التحديثات</h2>
+        <div class="bg-white rounded-xl ring-1 ring-slate-200 p-4 space-y-3">
+          <h3 class="font-bold">إضافة/تعديل فيديو آخر التحديثات</h3>
+          <p class="text-sm text-slate-600">هذا الفيديو سيظهر في قسم الدورات في الصفحة الرئيسية</p>
+          <input id="fv_id" type="hidden">
+          <input id="fv_title" class="border rounded p-2 w-full" placeholder="عنوان الفيديو (اختياري)" value="آخر التحديثات">
+          <textarea id="fv_description" class="border rounded p-2 w-full min-h-[80px]" placeholder="وصف الفيديو (اختياري)"></textarea>
+          <div class="grid md:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-sm mb-1">رفع فيديو من الجهاز</label>
+              <input id="fv_video_file" type="file" accept="video/*">
+              <p class="text-xs text-slate-500 mt-1">أو استخدم رابط يوتيوب أدناه</p>
+            </div>
+            <div>
+              <label class="block text-sm mb-1">أو رابط فيديو (YouTube/MP4)</label>
+              <input id="fv_video_url" class="border rounded p-2 w-full" placeholder="https://www.youtube.com/watch?v=...">
+            </div>
+            <div>
+              <label class="block text-sm mb-1">صورة مصغرة (اختياري)</label>
+              <input id="fv_thumbnail_file" type="file" accept="image/*">
+            </div>
+            <div>
+              <label class="block text-sm mb-1">أو رابط صورة مصغرة</label>
+              <input id="fv_thumbnail_url" class="border rounded p-2 w-full" placeholder="https://...">
+            </div>
+          </div>
+          <label class="inline-flex items-center gap-2">
+            <input id="fv_isActive" type="checkbox" class="w-5 h-5" checked>
+            <span>تفعيل الفيديو</span>
+          </label>
+          <div class="flex gap-2">
+            <button id="createFeaturedVideo" class="px-4 py-2 bg-amber-500 text-white rounded-lg">حفظ جديد</button>
+            <button id="updateFeaturedVideo" class="px-4 py-2 bg-slate-700 text-white rounded-lg">تحديث موجود</button>
+          </div>
+          <div id="featuredVideoMsg" class="text-sm text-slate-600"></div>
+        </div>
+        <div class="bg-white rounded-xl ring-1 ring-slate-200 p-4">
+          <h3 class="font-bold mb-3">الفيديوهات المحفوظة</h3>
+          <table class="tbl w-full text-sm" id="tblFeaturedVideos">
+            <thead><tr><th>العنوان</th><th>النوع</th><th>الحالة</th><th>التاريخ</th><th>إجراءات</th></tr></thead>
             <tbody></tbody>
           </table>
         </div>

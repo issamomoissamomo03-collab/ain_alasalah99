@@ -40,6 +40,16 @@ function getId() {
   return new URLSearchParams(location.search).get('id');
 }
 
+// Helper function to get YouTube thumbnail from URL
+function getYouTubeThumbnail(videoUrl) {
+  if (!videoUrl) return null;
+  const match = videoUrl.match(/(?:v=|youtu\.be\/)([A-Za-z0-9_-]{6,})/i);
+  if (match) {
+    return `https://img.youtube.com/vi/${match[1]}/maxresdefault.jpg`;
+  }
+  return null;
+}
+
 async function loadCourseDetails() {
   const id = getId();
   if (!id) { location.href = 'courses.html'; return; }
@@ -57,10 +67,78 @@ async function loadCourseDetails() {
 
       document.getElementById('courseTitle').textContent = c.title || '—';
       document.getElementById('courseInfo').innerHTML = `
-          <div class="text-slate-600">${c.description || ''}</div>
-          ${c.giftBookId ? `<div class="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg"><p class="font-bold text-green-800">🎁 هذه الدورة تأتي مع هدية!</p><p class="text-sm text-green-700">عند اشتراكك، ستحصل على: كتاب "${c.giftBookId.title}".</p></div>` : ''}
-          <div class="mt-2"><span class="text-amber-600 font-bold">${(c.price != null) ? (c.price + ' د.أ') : ''}</span></div>
+          <div class="text-slate-600 mb-2">${c.description || ''}</div>
+          ${c.teacher ? `<div class="text-sm text-slate-500 mb-2">👨‍🏫 <span class="font-semibold">المدرس:</span> ${c.teacher}</div>` : ''}
+          ${c.giftBookId ? `<div class="mt-3 p-3 bg-green-50 border border-green-200 rounded-lg"><p class="font-bold text-green-800">🎁 هذه الدورة تأتي مع هدية!</p><p class="text-sm text-green-700">عند اشتراكك، ستحصل على: كتاب "${c.giftBookId.title}".</p></div>` : ''}
+          <div class="mt-3"><span class="text-amber-600 font-bold text-lg">${(c.price != null) ? (c.price + ' د.أ') : ''}</span></div>
       `;
+
+      // Display course stats (lesson count)
+      const stats = c.stats || {};
+      const lessonCount = stats.lessonCount || 0;
+      document.getElementById('courseStats').innerHTML = `
+        <div class="flex items-center gap-4 flex-wrap">
+          <div class="flex items-center gap-2">
+            <span class="text-teal-700 font-semibold">📚 عدد الدروس:</span> 
+            <span class="text-slate-800 font-bold">${lessonCount} ${lessonCount === 1 ? 'درس' : lessonCount === 2 ? 'درسان' : lessonCount > 2 && lessonCount < 11 ? 'دروس' : 'درس'}</span>
+          </div>
+        </div>
+      `;
+
+      // Display course thumbnail
+      const thumbnailImg = document.getElementById('courseThumbnail');
+      const thumbnailPlaceholder = document.getElementById('courseThumbnailPlaceholder');
+      
+      // Priority: coverUrl > YouTube thumbnail from first video > placeholder
+      let thumbnailUrl = null;
+      if (c.coverUrl) {
+        thumbnailUrl = c.coverUrl;
+      } else if (stats.firstVideoUrl) {
+        const ytThumb = getYouTubeThumbnail(stats.firstVideoUrl);
+        if (ytThumb) {
+          thumbnailUrl = ytThumb;
+        }
+      }
+
+      if (thumbnailUrl) {
+        thumbnailImg.src = thumbnailUrl;
+        thumbnailImg.classList.remove('hidden');
+        thumbnailPlaceholder.classList.add('hidden');
+        thumbnailImg.onerror = () => {
+          thumbnailImg.classList.add('hidden');
+          thumbnailPlaceholder.classList.remove('hidden');
+        };
+      } else {
+        thumbnailImg.classList.add('hidden');
+        thumbnailPlaceholder.classList.remove('hidden');
+      }
+
+      // Load lessons list (public preview - just titles)
+      const lessonListDiv = document.getElementById('lessonList');
+      try {
+        const lessonsRes = await fetch(`/api/courses/${id}/lessons/preview`);
+        if (lessonsRes.ok) {
+          const lessons = await lessonsRes.json();
+          if (lessons.length > 0) {
+            lessonListDiv.innerHTML = lessons.map((lesson, idx) => `
+              <div class="p-3 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:shadow-sm transition">
+                <div class="flex items-center gap-3">
+                  <span class="flex-shrink-0 w-8 h-8 bg-teal-100 text-teal-700 rounded-full flex items-center justify-center font-bold text-sm">${idx + 1}</span>
+                  <span class="flex-1 text-slate-800 font-medium">${lesson.title || 'درس بدون عنوان'}</span>
+                  ${lesson.isPreview ? '<span class="flex-shrink-0 text-xs bg-amber-100 text-amber-700 px-2 py-1 rounded-full font-semibold">معاينة</span>' : ''}
+                </div>
+              </div>
+            `).join('');
+          } else {
+            lessonListDiv.innerHTML = '<div class="p-4 bg-slate-50 border border-slate-200 rounded-lg text-center"><p class="text-sm text-slate-500">لا توجد دروس متاحة حالياً</p></div>';
+          }
+        } else {
+          lessonListDiv.innerHTML = '<div class="p-4 bg-slate-50 border border-slate-200 rounded-lg text-center"><p class="text-sm text-slate-500">لا توجد دروس متاحة حالياً</p></div>';
+        }
+      } catch (e) {
+        console.warn('Could not load lessons:', e);
+        lessonListDiv.innerHTML = '<div class="p-4 bg-slate-50 border border-slate-200 rounded-lg text-center"><p class="text-sm text-slate-500">لا توجد دروس متاحة حالياً</p></div>';
+      }
 
       const enrollBtn = document.getElementById('enrollBtn');
       const enrollMsg = document.getElementById('enrollMsg');

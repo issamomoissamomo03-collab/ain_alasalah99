@@ -1,5 +1,70 @@
 // assets/js/home.js -> ✅ هذا هو الكود الصحيح والكامل للملف
 
+// ===== Featured Video (آخر التحديثات) =====
+(async function loadFeaturedVideo() {
+  const featuredVideoSection = document.getElementById('featuredVideoSection');
+  const featuredVideoTitle = document.getElementById('featuredVideoTitle');
+  const featuredVideoDescription = document.getElementById('featuredVideoDescription');
+  const featuredVideoPlayer = document.getElementById('featuredVideoPlayer');
+  
+  if (!featuredVideoSection) return;
+  
+  try {
+    const res = await fetch('/api/featured-video');
+    if (!res.ok) return;
+    
+    const video = await res.json();
+    if (!video || !video.videoUrl) return;
+    
+    // Show the section
+    featuredVideoSection.classList.remove('hidden');
+    
+    // Set title and description
+    if (featuredVideoTitle) featuredVideoTitle.textContent = video.title || 'آخر التحديثات';
+    if (featuredVideoDescription) featuredVideoDescription.textContent = video.description || '';
+    
+    // Display video based on type
+    const videoUrl = video.videoUrl;
+    let videoHtml = '';
+    
+    if (video.videoType === 'youtube' || videoUrl.includes('youtube.com') || videoUrl.includes('youtu.be')) {
+      // Extract YouTube video ID
+      const youtubeIdMatch = videoUrl.match(/(?:v=|youtu\.be\/)([A-Za-z0-9_-]{6,})/i);
+      if (youtubeIdMatch) {
+        const youtubeId = youtubeIdMatch[1];
+        videoHtml = `
+          <iframe 
+            class="w-full h-full" 
+            src="https://www.youtube.com/embed/${youtubeId}?rel=0&modestbranding=1" 
+            title="YouTube video player" 
+            frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            allowfullscreen>
+          </iframe>
+        `;
+      }
+    } else {
+      // Direct video file (MP4, etc.)
+      videoHtml = `
+        <video 
+          class="w-full h-full" 
+          controls 
+          controlsList="nodownload"
+          poster="${video.thumbnailUrl || ''}">
+          <source src="${videoUrl}" type="video/mp4">
+          متصفحك لا يدعم عرض الفيديوهات.
+        </video>
+      `;
+    }
+    
+    if (featuredVideoPlayer && videoHtml) {
+      featuredVideoPlayer.innerHTML = videoHtml;
+    }
+  } catch (e) {
+    console.warn('Failed to load featured video:', e);
+  }
+})();
+
 // ===== Courses on Home Page =====
 (async function () {
   const homeCourses = document.getElementById('homeCourses');

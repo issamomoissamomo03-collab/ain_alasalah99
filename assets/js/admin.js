@@ -812,3 +812,188 @@ async function loadUsers() {
 
 // تحميل المستخدمين عند فتح القسم
 $('[data-target="sec-users"]')?.addEventListener('click', ()=> setTimeout(loadUsers, 0));
+
+/**********************
+ * FEATURED VIDEO
+ **********************/
+async function loadFeaturedVideos() {
+  try {
+    const res = await authFetch('/api/admin/featured-video');
+    const videos = await res.json();
+    const tbody = qs('tblFeaturedVideos')?.querySelector('tbody');
+    if (!tbody) return;
+    
+    tbody.innerHTML = videos.map(v => `
+      <tr>
+        <td>${v.title || 'آخر التحديثات'}</td>
+        <td>${v.videoType === 'youtube' ? 'YouTube' : 'رفع'}</td>
+        <td>${v.isActive ? '<span class="text-green-600">نشط</span>' : '<span class="text-slate-400">غير نشط</span>'}</td>
+        <td>${new Date(v.createdAt).toLocaleDateString('ar')}</td>
+        <td>
+          <button onclick="editFeaturedVideo('${v._id}')" class="text-blue-600 hover:underline">تعديل</button>
+          <button onclick="deleteFeaturedVideo('${v._id}')" class="text-red-600 hover:underline mr-2">حذف</button>
+        </td>
+      </tr>
+    `).join('');
+  } catch (e) {
+    console.error('Failed to load featured videos:', e);
+  }
+}
+
+async function editFeaturedVideo(id) {
+  try {
+    const res = await authFetch('/api/admin/featured-video');
+    const videos = await res.json();
+    const video = videos.find(v => v._id === id);
+    if (!video) return;
+    
+    qs('fv_id').value = id;
+    qs('fv_title').value = video.title || 'آخر التحديثات';
+    qs('fv_description').value = video.description || '';
+    qs('fv_video_url').value = video.videoUrl || '';
+    qs('fv_thumbnail_url').value = video.thumbnailUrl || '';
+    qs('fv_isActive').checked = video.isActive !== false;
+    
+    showToast('تم تحميل بيانات الفيديو');
+  } catch (e) {
+    showToast('فشل تحميل بيانات الفيديو', 'error');
+  }
+}
+
+async function deleteFeaturedVideo(id) {
+  if (!confirm('هل أنت متأكد من حذف هذا الفيديو؟')) return;
+  try {
+    await authFetch(`/api/admin/featured-video/${id}`, { method: 'DELETE' });
+    showToast('تم حذف الفيديو');
+    await loadFeaturedVideos();
+  } catch (e) {
+    showToast('فشل حذف الفيديو', 'error');
+  }
+}
+
+qs('createFeaturedVideo')?.addEventListener('click', async () => {
+  try {
+    const title = qs('fv_title').value.trim() || 'آخر التحديثات';
+    const description = qs('fv_description').value.trim();
+    const videoUrl = qs('fv_video_url').value.trim();
+    const thumbnailUrl = qs('fv_thumbnail_url').value.trim();
+    const isActive = qs('fv_isActive').checked;
+    
+    let finalVideoUrl = videoUrl;
+    let videoType = 'youtube';
+    
+    // Check if YouTube URL
+    if (videoUrl && (videoUrl.includes('youtube.com') || videoUrl.includes('youtu.be'))) {
+      videoType = 'youtube';
+      finalVideoUrl = videoUrl;
+    } else if (qs('fv_video_file').files.length > 0) {
+      // Upload video file
+      finalVideoUrl = await uploadIfNeeded('fv_video_file', 'fv_video_url', 'featured-videos');
+      videoType = 'upload';
+    } else if (!videoUrl) {
+      return showToast('يرجى إدخال رابط فيديو أو رفع ملف', 'error');
+    }
+    
+    let finalThumbnailUrl = thumbnailUrl;
+    if (qs('fv_thumbnail_file').files.length > 0) {
+      finalThumbnailUrl = await uploadIfNeeded('fv_thumbnail_file', 'fv_thumbnail_url', 'thumbnails');
+    }
+    
+    const body = {
+      title,
+      description,
+      videoUrl: finalVideoUrl,
+      videoType,
+      thumbnailUrl: finalThumbnailUrl,
+      isActive
+    };
+    
+    const res = await authFetch('/api/admin/featured-video', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    
+    const result = await res.json();
+    showToast('تم حفظ الفيديو بنجاح');
+    qs('featuredVideoMsg').textContent = 'تم: ' + JSON.stringify(result);
+    
+    // Clear form
+    qs('fv_id').value = '';
+    qs('fv_title').value = 'آخر التحديثات';
+    qs('fv_description').value = '';
+    qs('fv_video_url').value = '';
+    qs('fv_thumbnail_url').value = '';
+    qs('fv_video_file').value = '';
+    qs('fv_thumbnail_file').value = '';
+    qs('fv_isActive').checked = true;
+    
+    await loadFeaturedVideos();
+  } catch (e) {
+    showToast('فشل حفظ الفيديو', 'error');
+    console.error(e);
+  }
+});
+
+qs('updateFeaturedVideo')?.addEventListener('click', async () => {
+  const id = qs('fv_id').value.trim();
+  if (!id) return showToast('يرجى اختيار فيديو للتعديل', 'error');
+  
+  try {
+    const title = qs('fv_title').value.trim() || 'آخر التحديثات';
+    const description = qs('fv_description').value.trim();
+    let videoUrl = qs('fv_video_url').value.trim();
+    let thumbnailUrl = qs('fv_thumbnail_url').value.trim();
+    const isActive = qs('fv_isActive').checked;
+    
+    let videoType = 'youtube';
+    
+    // Check if YouTube URL
+    if (videoUrl && (videoUrl.includes('youtube.com') || videoUrl.includes('youtu.be'))) {
+      videoType = 'youtube';
+    } else if (qs('fv_video_file').files.length > 0) {
+      videoUrl = await uploadIfNeeded('fv_video_file', 'fv_video_url', 'featured-videos');
+      videoType = 'upload';
+    }
+    
+    if (qs('fv_thumbnail_file').files.length > 0) {
+      thumbnailUrl = await uploadIfNeeded('fv_thumbnail_file', 'fv_thumbnail_url', 'thumbnails');
+    }
+    
+    const body = {
+      title,
+      description,
+      videoUrl,
+      videoType,
+      thumbnailUrl,
+      isActive
+    };
+    
+    const res = await authFetch(`/api/admin/featured-video/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    
+    const result = await res.json();
+    showToast('تم تحديث الفيديو بنجاح');
+    qs('featuredVideoMsg').textContent = 'تم: ' + JSON.stringify(result);
+    
+    // Clear form
+    qs('fv_id').value = '';
+    qs('fv_title').value = 'آخر التحديثات';
+    qs('fv_description').value = '';
+    qs('fv_video_url').value = '';
+    qs('fv_thumbnail_url').value = '';
+    qs('fv_video_file').value = '';
+    qs('fv_thumbnail_file').value = '';
+    qs('fv_isActive').checked = true;
+    
+    await loadFeaturedVideos();
+  } catch (e) {
+    showToast('فشل تحديث الفيديو', 'error');
+    console.error(e);
+  }
+});
+
+$('[data-target="sec-featured-video"]')?.addEventListener('click', () => setTimeout(loadFeaturedVideos, 0));

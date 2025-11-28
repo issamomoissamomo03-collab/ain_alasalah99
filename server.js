@@ -22,13 +22,46 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 8080;
 
+// Trust proxy to get real IP addresses
+app.set('trust proxy', true);
+
 app.use(express.json());
+
+// ===== Real-time Visitor Tracking =====
+const activeVisitors = new Map(); // Map<visitorId, lastActivity>
+const VISITOR_TIMEOUT = 90000; // 90 seconds - visitor considered inactive after this
+
+// Middleware to track active visitors
+app.use((req, res, next) => {
+  // Skip API calls and static assets
+  if (req.path.startsWith('/api/') || req.path.startsWith('/assets/')) {
+    return next();
+  }
+  
+  // Create unique visitor ID from IP + User-Agent
+  const ip = req.ip || req.connection.remoteAddress || 'unknown';
+  const userAgent = req.get('user-agent') || 'unknown';
+  const visitorId = `${ip}-${userAgent}`.substring(0, 100); // Limit length
+  
+  // Update visitor activity
+  activeVisitors.set(visitorId, Date.now());
+  next();
+});
+
+// Clean up inactive visitors every minute
+setInterval(() => {
+  const now = Date.now();
+  for (const [visitorId, lastActivity] of activeVisitors.entries()) {
+    if (now - lastActivity > VISITOR_TIMEOUT) {
+      activeVisitors.delete(visitorId);
+    }
+  }
+}, 60000); // Run every minute
 
 // ===== TEMPORARY: Admin bypass (disabled) =====
 const TEMP_ADMIN_BYPASS = false;
 
-// ✅ قدّم كل الملفات الستاتيكية من نفس مجلد المشروع
-app.use(express.static(__dirname)); // يخدّم index.html, courses.html, assets/... إلخ
+// Note: express.static will be added AFTER API routes to avoid conflicts
 
 // اتصال مونغو
 mongoose
@@ -110,6 +143,17 @@ const AnnouncementSchema = new mongoose.Schema({
   expiresAt: Date // تاريخ انتهاء صلاحية الإعلان
 });
 const Announcement = mongoose.model('Announcement', AnnouncementSchema);
+
+// ===== Featured Video Schema (آخر التحديثات) =====
+const FeaturedVideoSchema = new mongoose.Schema({
+  title: { type: String, default: 'آخر التحديثات' },
+  videoUrl: String, // YouTube link or uploaded video URL
+  videoType: { type: String, enum: ['youtube', 'upload'], default: 'youtube' },
+  thumbnailUrl: String, // Optional thumbnail
+  description: String,
+  isActive: { type: Boolean, default: true }
+}, { timestamps: true });
+const FeaturedVideo = mongoose.model('FeaturedVideo', FeaturedVideoSchema);
 
   // --- NEW/MODIFIED Consultation Schema ---
 const ConsultationSchema = new mongoose.Schema({
@@ -212,15 +256,119 @@ async function verifyFirebaseToken(req, res, next) {
   
   function requireAdmin(req, res, next) {
     if (TEMP_ADMIN_BYPASS) return next();
-    if (!req.user) return res.status(401).json({ error: 'No user' });
+    if (!req.user) {
+      console.log('requireAdmin: No user found');
+      return res.status(401).json({ error: 'No user' });
+    }
     User.findOne({ uid: req.user.uid }).then(u => {
-      if (!u || u.role !== 'admin') return res.status(403).json({ error: 'Forbidden' });
+      if (!u || u.role !== 'admin') {
+        console.log('requireAdmin: User not admin', { uid: req.user.uid, role: u?.role });
+        return res.status(403).json({ error: 'Forbidden' });
+      }
       next();
+    }).catch(err => {
+      console.error('requireAdmin error:', err);
+      res.status(500).json({ error: 'Server error' });
     });
   }
 
   
 // ---------- API ----------
+
+// ===== Real-time Visitor Count =====
+app.get('/api/visitors/active', (req, res) => {
+  // Clean up inactive visitors before counting
+  const now = Date.now();
+  for (const [visitorId, lastActivity] of activeVisitors.entries()) {
+    if (now - lastActivity > VISITOR_TIMEOUT) {
+      activeVisitors.delete(visitorId);
+    }
+  }
+  res.json({ count: activeVisitors.size });
+});
+
+// ===== Featured Video (آخر التحديثات) =====
+// Public: Get active featured video
+app.get('/api/featured-video', async (req, res) => {
+  try {
+    const video = await FeaturedVideo.findOne({ isActive: true }).sort({ createdAt: -1 }).lean();
+    res.json(video || null);
+  } catch (e) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Admin: Get all featured videos
+app.get('/api/admin/featured-video', verifyFirebaseToken, requireAdmin, async (req, res) => {
+  try {
+    console.log('GET /api/admin/featured-video - Fetching videos');
+    const videos = await FeaturedVideo.find().sort({ createdAt: -1 }).lean();
+    res.json(videos);
+  } catch (e) {
+    console.error('Error fetching featured videos:', e);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Admin: Create/Update featured video
+app.post('/api/admin/featured-video', verifyFirebaseToken, requireAdmin, async (req, res) => {
+  try {
+    console.log('POST /api/admin/featured-video - Creating video', req.body);
+    const { title, videoUrl, videoType, thumbnailUrl, description, isActive } = req.body;
+    
+    // Deactivate all other videos if this one is active
+    if (isActive) {
+      await FeaturedVideo.updateMany({}, { isActive: false });
+    }
+    
+    const video = await FeaturedVideo.create({
+      title: title || 'آخر التحديثات',
+      videoUrl,
+      videoType: videoType || 'youtube',
+      thumbnailUrl,
+      description,
+      isActive: isActive !== undefined ? isActive : true
+    });
+    
+    res.json(video);
+  } catch (e) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Admin: Update featured video
+app.put('/api/admin/featured-video/:id', verifyFirebaseToken, requireAdmin, async (req, res) => {
+  try {
+    const { title, videoUrl, videoType, thumbnailUrl, description, isActive } = req.body;
+    
+    // Deactivate all other videos if this one is being activated
+    if (isActive) {
+      await FeaturedVideo.updateMany({ _id: { $ne: req.params.id } }, { isActive: false });
+    }
+    
+    const video = await FeaturedVideo.findByIdAndUpdate(
+      req.params.id,
+      { title, videoUrl, videoType, thumbnailUrl, description, isActive },
+      { new: true }
+    );
+    
+    if (!video) return res.status(404).json({ error: 'Video not found' });
+    res.json(video);
+  } catch (e) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Admin: Delete featured video
+app.delete('/api/admin/featured-video/:id', verifyFirebaseToken, requireAdmin, async (req, res) => {
+  try {
+    await FeaturedVideo.findByIdAndDelete(req.params.id);
+    res.json({ success: true });
+  } catch (e) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 app.get('/api/articles', async (req, res) => {
     const limit = Number(req.query.limit || 0);
     let query = Article.find({ isPublished: true }).sort({ publishedAt: -1 });
@@ -710,14 +858,34 @@ app.get('/api/courses/:id', async (req, res) => {
   try {
     const item = await Course.findById(req.params.id).populate('giftBookId', 'title').lean(); // <-- السطر الجديد
     if (!item) return res.status(404).json({ error: 'Course not found' });
-    res.json(item);
+    
+    // Get lesson count and first video URL for thumbnail
+    const lessons = await Lesson.find({ courseId: req.params.id }).sort({ order: 1, _id: 1 }).limit(1).lean();
+    const lessonCount = await Lesson.countDocuments({ courseId: req.params.id });
+    
+    const stats = {
+      lessonCount,
+      firstVideoUrl: lessons.length > 0 ? lessons[0].videoUrl : null
+    };
+    
+    res.json({ ...item, stats });
   } catch {
     res.status(400).json({ error: 'Invalid id' });
   }
 });
 
-// ===== Public: Lessons for a course (preview only in frontend) =====
-// server.js
+// ===== Public: Get lesson titles only (for course detail page) =====
+app.get('/api/courses/:courseId/lessons/preview', async (req, res) => {
+  try {
+    const lessons = await Lesson.find({ courseId: req.params.courseId })
+      .select('title isPreview order')
+      .sort({ order: 1, _id: 1 })
+      .lean();
+    res.json(lessons);
+  } catch (e) {
+    res.status(400).json({ error: 'Invalid courseId' });
+  }
+});
 
 // ===== SECURED: Lessons for an enrolled user =====
 app.get('/api/courses/:courseId/lessons', verifyFirebaseToken, async (req, res) => {
@@ -850,6 +1018,10 @@ app.post('/api/admin/consultations/:id/reply', verifyFirebaseToken, requireAdmin
   }
 });
 
+
+// ✅ قدّم كل الملفات الستاتيكية من نفس مجلد المشروع (بعد API routes)
+// Static files should be served last, after all API routes
+app.use(express.static(__dirname));
 
 // ---------- Routes للصفحات (اختياري/تأكيد) ----------
 app.get('/', (req, res) => {
