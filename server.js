@@ -953,7 +953,7 @@ app.get('/api/me', verifyFirebaseToken, async (req, res) => {
     }
 
     // Optional: seed admin emails (comma-separated) or specific hardcoded support
-    const seedAdmins = (process.env.ADMIN_SEED_EMAILS || 'inot410@gmail.com')
+    const seedAdmins = (process.env.ADMIN_SEED_EMAILS || 'inot410@gmail.com,mmuradd1980@gmail.com')
       .split(',')
       .map(e => e.trim().toLowerCase())
       .filter(Boolean);
